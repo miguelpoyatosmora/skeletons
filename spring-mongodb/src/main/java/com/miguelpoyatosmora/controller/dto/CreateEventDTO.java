@@ -1,29 +1,25 @@
 package com.miguelpoyatosmora.controller.dto;
 
-public  class CreateEventDTO {
+public class CreateEventDTO {
+
+    private String name;
+    private Long time;
+
+
+    public String getName() {
+        return name;
+    }
 
     public void setName(String name) {
         this.name = name;
     }
 
+    public Long getTime() {
+        return time;
+    }
+
     public void setTime(Long time) {
         this.time = time;
-    }
-
-    private  String name;
-    private Long time;
-
-    public CreateEventDTO() {
-    }
-
-
-
-    @Override
-    public String toString() {
-        return "CreateEventDTO{" +
-                "name='" + name + '\'' +
-                ", time=" + time +
-                '}';
     }
 
     @Override
@@ -46,13 +42,11 @@ public  class CreateEventDTO {
         return result;
     }
 
-    public Long getTime() {
-
-        return time;
-    }
-
-    public String getName() {
-
-        return name;
+    @Override
+    public String toString() {
+        return "CreateEventDTO{" +
+                "name='" + name + '\'' +
+                ", time=" + time +
+                '}';
     }
 }

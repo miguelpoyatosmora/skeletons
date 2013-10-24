@@ -1,5 +1,6 @@
 package com.miguelpoyatosmora.domain;
 
+import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -13,15 +14,9 @@ public final class Event {
     @Id
     final private String id;
     final private String name;
-    final private Date time;
+    final private DateTime time;
 
-//    public Event(String name, Date time) {
-//        id = null;
-//        this.name = name;
-//        this.time = time;
-//    }
-
-    public Event(String id, String name, Date time) {
+    public Event(String id, String name, DateTime time) {
         this.id = id;
         this.name = name;
         this.time = time;
@@ -35,7 +30,7 @@ public final class Event {
         return name;
     }
 
-    public Date getTime() {
+    public DateTime getTime() {
         return time;
     }
 

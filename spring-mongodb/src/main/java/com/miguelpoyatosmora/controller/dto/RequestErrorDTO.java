@@ -2,11 +2,10 @@ package com.miguelpoyatosmora.controller.dto;
 
 public final class RequestErrorDTO {
 
-    public void setErrorDescription(String errorDescription) {
-        this.errorDescription = errorDescription;
-    }
-
     private String errorDescription;
+
+    public RequestErrorDTO() {
+    }
 
     public RequestErrorDTO(String errorDescription) {
         this.errorDescription = errorDescription;
@@ -14,6 +13,10 @@ public final class RequestErrorDTO {
 
     public String getErrorDescription() {
         return errorDescription;
+    }
+
+    public void setErrorDescription(String errorDescription) {
+        this.errorDescription = errorDescription;
     }
 
     @Override

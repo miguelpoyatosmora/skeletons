@@ -4,6 +4,7 @@ import com.miguelpoyatosmora.controller.dto.CreateEventDTO;
 import com.miguelpoyatosmora.controller.dto.RequestErrorDTO;
 import com.miguelpoyatosmora.domain.Event;
 import com.miguelpoyatosmora.repository.EventRepository;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -36,8 +37,11 @@ public class EventController {
     public String createEvent(@RequestBody CreateEventDTO createEventDTO) {
         logger.debug("createEvent " + createEventDTO);
 
-        Event event = new Event(null, createEventDTO.getName(), new Date(createEventDTO.getTime()));
-        return eventRepository.save(event).getId();
+        return eventRepository.save(map(createEventDTO)).getId();
+    }
+
+    private Event map(CreateEventDTO createEventDTO) {
+        return new Event(null, createEventDTO.getName(), new DateTime(createEventDTO.getTime()));
     }
 
     @RequestMapping(value = "/events")
