@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="angularApp">
+<head>
+    <meta charset="utf-8">
+    <script src="js/angular.min.js"></script>
+    <script src="js/controllers.js"></script>
+</head>
+<body>
+<div ng-controller="EventCtrl">
+    <input type="text" ng-model="create.event.name">
+    <input type="text" ng-model="create.event.time">
+    <button type='button' ng-click="create(create.event)">Create</button>
+
+    <div ng-repeat="event in events">
+        <button type='button' ng-click="open(event.id)">{{event.name}}</button>
+    </div>
+    <p>{{event.id}}</p>
+    <p>{{event.name}}</p>
+    <p>{{event.time}}</p>
+</div>
+</body>
+</html>
