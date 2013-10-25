@@ -2,22 +2,58 @@
 
 var phonecatApp = angular.module('angularApp', []);
 
-phonecatApp.controller('EventCtrl', function PhoneListCtrl($scope,$http) {
+phonecatApp.controller('EventCtrl', function PhoneListCtrl($scope, $http) {
 
+    $scope.newEvent = {"name":null,"date":null,"time":null};
+    $http.get('rest/events/').success(function (data) {
+        $scope.events = data;
+    });
 
-  $http.get('rest/events/').success(function(data) {
-       $scope.events = data;
-  });
+    $scope.create = function () {
 
-  $scope.create = function(event){
-        $http.post('rest/event/',event).success(function(id) {
+        console.log($scope.newEvent.date + " " + $scope.newEvent.time);
+        var time = new Date($scope.newEvent.date + " " + $scope.newEvent.time).getTime();
+
+        $http.post('rest/event/', {
+            "name": $scope.newEvent.name,
+            "time": time
+        }).success(function (id) {
             alert(id);
         });
-      };
+    };
 
-  $scope.open = function(id){
-    $http.get('rest/event/'+id).success(function(data) {
-        $scope.event = data;
-    });
-  };
+    $scope.open = function (id) {
+        $http.get('rest/event/' + id).success(function (data) {
+            data.time = new Date(data.time);
+            $scope.event = data;
+        });
+    };
+});
+
+phonecatApp.directive('datepicker', function () {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function (scope, element, attrs, ngModelCtrl) {
+            element.datepicker({
+                dateFormat: 'MM dd, yy',
+                onSelect: function (date) {
+                    scope.newEvent.date = date
+                    element.value = date;
+                }
+            });
+        }
+    };
+});
+phonecatApp.directive('timepicker', function () {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function (scope, element, attrs, ngModelCtrl) {
+            $(element).on("change", function (data) {
+                scope.newEvent.time = data.target.value;
+            });
+            element.timepicker({"timeFormat":"G:i:s"});
+        }
+    };
 });

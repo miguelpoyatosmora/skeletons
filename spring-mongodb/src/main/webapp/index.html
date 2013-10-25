@@ -2,14 +2,20 @@
 <html lang="en" ng-app="angularApp">
 <head>
     <meta charset="utf-8">
-    <script src="js/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+    <script src="js/jquery.timepicker.min.js"></script>
     <script src="js/controllers.js"></script>
+    <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.min.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery.timepicker.css">
 </head>
 <body>
 <div ng-controller="EventCtrl">
-    <input type="text" ng-model="create.event.name">
-    <input type="text" ng-model="create.event.time">
-    <button type='button' ng-click="create(create.event)">Create</button>
+    <input type="text" ng-model="newEvent.name" />
+    <input type="text" ng-model="newEvent.date" datepicker />
+    <input type="text" ng-model="newEvent.time" timepicker />
+    <button type='button' ng-click="create()">Create</button>
 
     <div ng-repeat="event in events">
         <button type='button' ng-click="open(event.id)">{{event.name}}</button>

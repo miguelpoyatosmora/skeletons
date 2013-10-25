@@ -1,8 +1,13 @@
 package com.miguelpoyatosmora.controller.dto;
 
+import javax.validation.constraints.NotNull;
+
 public class CreateEventDTO {
 
+    @NotNull
     private String name;
+
+    @NotNull
     private Long time;
 
 

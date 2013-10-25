@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class EventController {
     @RequestMapping(value = "/event/", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public String createEvent(@RequestBody CreateEventDTO createEventDTO) {
+    public String createEvent(@Valid @RequestBody CreateEventDTO createEventDTO) {
         logger.debug("createEvent " + createEventDTO);
 
         return eventRepository.save(map(createEventDTO)).getId();
