@@ -4,7 +4,11 @@ var phonecatApp = angular.module('angularApp', []);
 
 phonecatApp.controller('EventCtrl', function PhoneListCtrl($scope, $http) {
 
-    $scope.newEvent = {"name":null,"date":null,"time":null};
+    $scope.newEvent = {
+        "name": null,
+        "date": null,
+        "time": null
+    };
     $http.get('rest/events/').success(function (data) {
         $scope.events = data;
     });
@@ -18,14 +22,22 @@ phonecatApp.controller('EventCtrl', function PhoneListCtrl($scope, $http) {
             "name": $scope.newEvent.name,
             "time": time
         }).success(function (id) {
-            alert(id);
+            $scope.events.push({
+                "id": id,
+                "name": $scope.newEvent.name,
+                "time": time,
+                "likes": 0
+            })
         });
     };
 
-    $scope.open = function (id) {
-        $http.get('rest/event/' + id).success(function (data) {
-            data.time = new Date(data.time);
-            $scope.event = data;
+    $scope.like = function (id) {
+        $http.put('rest/event/' + id).success(function () {
+            for (var i = 0; i < $scope.events.length; i++) {
+                if ($scope.events[i].id.indexOf(id) != -1) {
+                    $scope.events[i].likes++;
+                }
+            }
         });
     };
 });
@@ -53,7 +65,9 @@ phonecatApp.directive('timepicker', function () {
             $(element).on("change", function (data) {
                 scope.newEvent.time = data.target.value;
             });
-            element.timepicker({"timeFormat":"G:i:s"});
+            element.timepicker({
+                "timeFormat": "G:i:s"
+            });
         }
     };
 });

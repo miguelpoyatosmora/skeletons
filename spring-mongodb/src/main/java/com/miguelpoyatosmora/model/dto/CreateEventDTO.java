@@ -1,4 +1,4 @@
-package com.miguelpoyatosmora.controller.dto;
+package com.miguelpoyatosmora.model.dto;
 
 import javax.validation.constraints.NotNull;
 

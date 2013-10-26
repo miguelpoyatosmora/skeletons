@@ -1,42 +1,49 @@
 package com.miguelpoyatosmora.repository;
 
 
-import com.miguelpoyatosmora.domain.Event;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.miguelpoyatosmora.model.domain.Event;
+import com.miguelpoyatosmora.model.exception.EventNotFoundException;
+import org.joda.time.DateTime;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Update;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 public class EventRepositoryImpl implements EventRepositoryCustom {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Resource
     private MongoOperations mongoOps;
 
     @Override
-    public List<Event> findByOptionalNameAndDateRange(String name, Date datefrom, Date dateto) {
-        logger.debug("findByOptionalNameAndDateRange controller");
-        List<Criteria> criterias = new ArrayList<Criteria>();
+    public List<Event> findByOptionalNameAndDateRange(String name, DateTime datefrom, DateTime dateto) {
+
+        List<Criteria> criterias = new ArrayList<Criteria>(3);
 
         if (datefrom != null) {
-            criterias.add(Criteria.where("time").gt(datefrom));
+            criterias.add(where("time").gt(datefrom));
         }
         if (dateto != null) {
-            criterias.add(Criteria.where("time").lt(dateto));
+            criterias.add(where("time").lt(dateto));
         }
         if (name != null) {
-            criterias.add(Criteria.where("name").regex(name));
+            criterias.add(where("name").regex(name));
         }
 
         return mongoOps.find(query(joinCriterias(criterias)), Event.class);
+    }
+
+    @Override
+    public void incrementLikes(String id) {
+
+        Event modifiedEvent = mongoOps.findAndModify(query(where("id").is(id)), new Update().inc("likes", 1), Event.class);
+        if (modifiedEvent == null) throw new EventNotFoundException(id);
     }
 
     private static Criteria joinCriterias(List<Criteria> criterias) {

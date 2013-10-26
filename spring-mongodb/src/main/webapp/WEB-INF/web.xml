@@ -1,6 +1,7 @@
 <web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
     <!-- Java-based Spring container definition -->
     <context-param>
         <param-name>contextClass</param-name>
@@ -32,7 +33,6 @@
             <param-value>true</param-value>
         </init-param>
     </filter>
-
     <filter-mapping>
         <filter-name>encodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -52,6 +52,7 @@
         <servlet-name>springDispatcherServlet</servlet-name>
         <url-pattern>/rest/*</url-pattern>
     </servlet-mapping>
+
     <!-- Logging listener -->
     <listener>
         <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
