@@ -28,7 +28,6 @@ public class EventController {
         return eventService.create(createEventDTO.getName(), createEventDTO.getTime());
     }
 
-    //TODO: Manage the 404
     @RequestMapping(value = "/event/{id}", method = RequestMethod.GET)
     @ResponseBody
     public Event get(@PathVariable String id) {
@@ -36,7 +35,6 @@ public class EventController {
         return eventService.get(id);
     }
 
-    //TODO: Manage the 404
     @RequestMapping(value = "/event/{id}", method = RequestMethod.PUT)
     @ResponseBody
     public void like(@PathVariable String id) {
@@ -44,7 +42,6 @@ public class EventController {
         eventService.like(id);
     }
 
-    //TODO: Manage the 404
     @RequestMapping(value = "/event/{id}", method = RequestMethod.DELETE)
     public void delete(@PathVariable String id) {
 

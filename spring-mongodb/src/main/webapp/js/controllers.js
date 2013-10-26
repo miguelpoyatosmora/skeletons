@@ -23,7 +23,7 @@ phonecatApp.controller('EventCtrl', function PhoneListCtrl($scope, $http) {
             "time": time
         }).success(function (id) {
             $scope.events.push({
-                "id": id,
+                "id": eval(id),
                 "name": $scope.newEvent.name,
                 "time": time,
                 "likes": 0
