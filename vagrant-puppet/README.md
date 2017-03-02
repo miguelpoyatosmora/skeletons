@@ -1,0 +1,2 @@
+Vaagrant + puppet skeleton
+====

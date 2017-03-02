@@ -1,0 +1,100 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# This configuration requires Vagrant 1.1 or newer and two plugins:
+#
+#   vagrant plugin install vagrant-hosts        ~> 2.0.0
+#   vagrant plugin install vagrant-auto_network ~> 0.2.1
+#
+# If using Vagrant boxes provided by PuppetLabs, verions 4.2.10 of VirtualBox
+# is reccomended.
+#
+# After installation, the following steps will spin up a master and agent that
+# can communicate with each other:
+#
+#     vagrant up
+#     vagrant ssh puppetagent
+#     sudo su -
+#     puppet agent -t --server=puppetmaster.local
+require 'vagrant-hosts'
+require 'vagrant-auto_network'
+
+Vagrant.configure('2') do |config|
+
+  box_url = 'http://puppet-vagrant-boxes.puppetlabs.com/centos-65-i386-virtualbox-nocm.box'
+  box_name = 'centos-i386-vbox-nocm'
+
+  config.vm.define :puppetmaster do |node|
+    # Create VMs running CentOS 6 with v4.2.10 of the VirtualBox guest
+    # extensions and no existing configuration management installations
+    # (puppet, chef, etc)
+    #
+    # An index of pre-built boxes can be found at:
+    #
+    #   http://puppet-vagrant-boxes.puppetlabs.com
+    node.vm.box_url = box_url
+    node.vm.box = box_name
+
+    node.vm.hostname = 'puppetmaster.local'
+
+    # Use vagrant-auto_network to assign an IP address.
+    node.vm.network :private_network, :ip => '0.0.0.0', :auto_network => true
+
+    # Use vagrant-hosts to add entries to /etc/hosts for each virtual machine
+    # in this file.
+    node.vm.provision :hosts
+
+    # Bootstrap the latest version of Puppet on CentOS 6 and Set up a Puppet Master
+    # that automatically signs certs from agents.
+    #
+    # For operating systems other than CentOS 6, a collection of bootstrap
+    # scripts can be found here:
+    #
+    #   https://github.com/hashicorp/puppet-bootstrap
+    #
+    # The Puppet Labs installation docs also have some useful pointers:
+    #
+    #   http://docs.puppetlabs.com/guides/installation.html#installing-puppet-1
+    bootstrap_script = <<-EOF
+    if which puppet > /dev/null 2>&1; then
+      echo 'Puppet Installed.'
+    else
+      echo 'Installing Puppet Master.'
+      rpm -ivh http://yum.puppetlabs.com/el/6/products/i386/puppetlabs-release-6-6.noarch.rpm
+      yum --nogpgcheck -y install puppet-server
+      echo '*.local' > /etc/puppet/autosign.conf
+      /usr/bin/puppet resource service iptables ensure=stopped enable=false
+      /usr/bin/puppet resource service puppetmaster ensure=running enable=true
+      /usr/bin/puppet module install palli-createrepo
+      yum --nogpgcheck -y install git
+      git clone https://github.com/miguelpoyatosmora/test /etc/puppet/manifests
+      puppet apply -e"createrepo { 'yumrepo':    repository_dir => '/var/yumrepos/yumrepo',    repo_cache_dir => '/var/cache/yumrepos/yumrepo'}"
+    fi
+    EOF
+    node.vm.provision :shell, :inline => bootstrap_script
+  end
+
+  config.vm.define :puppetagent do |node|
+    node.vm.box_url = box_url
+    node.vm.box = box_name
+
+    node.vm.hostname = 'puppetagent.local'
+
+    node.vm.network :private_network, :ip => '0.0.0.0', :auto_network => true
+    node.vm.provision :hosts
+
+    # Set up Puppet Agent to automatically connect with Puppet master
+    bootstrap_script = <<-EOF
+    if which puppet > /dev/null 2>&1; then
+      echo 'Puppet Installed.'
+    else
+      echo 'Installing Puppet Agent.'
+      cat /etc/hosts | grep puppetmaster| awk '{print $1" puppet"}' >> /etc/hosts
+      rpm -ivh http://yum.puppetlabs.com/el/6/products/i386/puppetlabs-release-6-6.noarch.rpm
+      yum --nogpgcheck -y install puppet
+    fi
+    EOF
+    node.vm.provision :shell, :inline => bootstrap_script
+  end
+
+end
